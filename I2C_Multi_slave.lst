@@ -1,0 +1,1382 @@
+
+
+HI-TECH Software PIC LITE Macro Assembler V9.80 build 6738 
+                                                                                               Wed May 18 15:59:54 2022
+
+HI-TECH Software Omniscient Code Generator (Lite mode) build 6738
+     1  0000                     opt subtitle "HI-TECH Software Omniscient Code Generator (Lite mode) build 6738"
+     2                           
+     3                           opt pagewidth 120
+     4                           
+     5                           	opt lm
+     6                           
+     7                           	processor	16F877A
+     8                           clrc	macro
+     9                           	bcf	3,0
+    10  0000                     	endm
+    11                           clrz	macro
+    12                           	bcf	3,2
+    13  0000                     	endm
+    14                           setc	macro
+    15                           	bsf	3,0
+    16  0000                     	endm
+    17                           setz	macro
+    18                           	bsf	3,2
+    19  0000                     	endm
+    20                           skipc	macro
+    21                           	btfss	3,0
+    22  0000                     	endm
+    23                           skipz	macro
+    24                           	btfss	3,2
+    25  0000                     	endm
+    26                           skipnc	macro
+    27                           	btfsc	3,0
+    28  0000                     	endm
+    29                           skipnz	macro
+    30                           	btfsc	3,2
+    31  0000                     	endm
+    32  0000                     indf	equ	0
+    33  0000                     indf0	equ	0
+    34  0002                     pc	equ	2
+    35  0002                     pcl	equ	2
+    36  0003                     status	equ	3
+    37  0004                     fsr	equ	4
+    38  0004                     fsr0	equ	4
+    39  0001                     c	equ	1
+    40  0000                     z	equ	0
+    41  000A                     pclath	equ	10
+    42                           	FNCALL	_main,_I2C_init
+    43                           	FNCALL	_main,_lcd_init
+    44                           	FNCALL	_main,_lcd_send_string
+    45                           	FNCALL	_lcd_send_string,_lcd_send_data
+    46                           	FNCALL	_lcd_init,_lcd_send_cmd
+    47                           	FNCALL	_lcd_send_data,_I2C_Master_start
+    48                           	FNCALL	_lcd_send_data,_I2C_Master_write
+    49                           	FNCALL	_lcd_send_data,_I2C_Master_stop
+    50                           	FNCALL	_lcd_send_cmd,_I2C_Master_start
+    51                           	FNCALL	_lcd_send_cmd,_I2C_Master_write
+    52                           	FNCALL	_lcd_send_cmd,_I2C_Master_stop
+    53                           	FNROOT	_main
+    54                           	global	_a
+    55                           	global	_sum
+    56                           	global	_PORTB
+    57                           psect	text124,local,class=CODE,delta=2
+    58                           global __ptext124
+    59  0000                     __ptext124:
+    60  0006                     _PORTB	set	6
+    61                           	global	_PORTC
+    62  0007                     _PORTC	set	7
+    63                           	global	_PORTD
+    64  0008                     _PORTD	set	8
+    65                           	global	_SSPBUF
+    66  0013                     _SSPBUF	set	19
+    67                           	global	_SSPCON
+    68  0014                     _SSPCON	set	20
+    69                           	global	_SSPIF
+    70  0063                     _SSPIF	set	99
+    71                           	global	_SSPADD
+    72  0093                     _SSPADD	set	147
+    73                           	global	_SSPSTAT
+    74  0094                     _SSPSTAT	set	148
+    75                           	global	_TRISB
+    76  0086                     _TRISB	set	134
+    77                           	global	_TRISC
+    78  0087                     _TRISC	set	135
+    79                           	global	_TRISD
+    80  0088                     _TRISD	set	136
+    81                           	global	_ACKDT
+    82  048D                     _ACKDT	set	1165
+    83                           	global	_ACKEN
+    84  048C                     _ACKEN	set	1164
+    85                           	global	_PEN
+    86  048A                     _PEN	set	1162
+    87                           	global	_RCEN
+    88  048B                     _RCEN	set	1163
+    89                           	global	_RSEN
+    90  0489                     _RSEN	set	1161
+    91                           	global	_SEN
+    92  0488                     _SEN	set	1160
+    93                           psect	strings,class=STRING,delta=2
+    94                           global __pstrings
+    95  0003                     __pstrings:
+    96                           ;	global	stringdir,stringtab,__stringbase
+    97  0003                     stringtab:
+    98                           ;	String table - string pointers are 1 byte each
+    99  0003                     stringcode:stringdir:
+      + 0003                     stringdir:	
+   100  0003  3000               movlw high(stringdir)
+   101  0004  008A               movwf pclath
+   102  0005  0804               movf fsr,w
+   103  0006  0A84               incf fsr
+   104  0007  0782               	addwf pc
+   105  0008                     __stringbase:
+   106  0008  3400               	retlw	0
+   107                           psect	strings
+   108                           	
+   109  0009                     STR_1:	
+   110  0009  344D               	retlw	77	;'M'
+   111  000A  3455               	retlw	85	;'U'
+   112  000B  3447               	retlw	71	;'G'
+   113  000C  3445               	retlw	69	;'E'
+   114  000D  3453               	retlw	83	;'S'
+   115  000E  3448               	retlw	72	;'H'
+   116  000F  3400               	retlw	0
+   117                           psect	strings
+   118                           	file	"I2C_Multi_slave.as"
+   119                           	line	#
+   120                           psect cinit,class=CODE,delta=2
+   121                           global start_initialization
+   122  06A9                     start_initialization:
+   123                           
+   124                           psect	bssCOMMON,class=COMMON,space=1
+   125                           global __pbssCOMMON
+   126  0079                     __pbssCOMMON:
+   127  0079                     _a:
+   128  0079                            ds      2
+   129                           
+   130  007B                     _sum:
+   131  007B                            ds      2
+   132                           
+   133                           ; Clear objects allocated to COMMON
+   134                           psect cinit,class=CODE,delta=2
+   135  06A9  01F9               	clrf	((__pbssCOMMON)+0)&07Fh
+   136  06AA  01FA               	clrf	((__pbssCOMMON)+1)&07Fh
+   137  06AB  01FB               	clrf	((__pbssCOMMON)+2)&07Fh
+   138  06AC  01FC               	clrf	((__pbssCOMMON)+3)&07Fh
+   139                           psect cinit,class=CODE,delta=2
+   140                           global end_of_initialization
+   141                           
+   142                           ;End of C runtime variable initialization code
+   143                           
+   144  06AD                     end_of_initialization:
+   145  06AD  0183               clrf status
+   146  06AE  120A  118A  2F18   ljmp _main	;jump to C main() function
+   147                           psect	cstackCOMMON,class=COMMON,space=1
+   148                           global __pcstackCOMMON
+   149  0070                     __pcstackCOMMON:
+   150                           	global	?_I2C_init
+   151  0070                     ?_I2C_init:	; 0 bytes @ 0x0
+   152                           	global	?_lcd_init
+   153  0070                     ?_lcd_init:	; 0 bytes @ 0x0
+   154                           	global	?_lcd_send_string
+   155  0070                     ?_lcd_send_string:	; 0 bytes @ 0x0
+   156                           	global	?_I2C_Master_start
+   157  0070                     ?_I2C_Master_start:	; 0 bytes @ 0x0
+   158                           	global	??_I2C_Master_start
+   159  0070                     ??_I2C_Master_start:	; 0 bytes @ 0x0
+   160                           	global	?_I2C_Master_write
+   161  0070                     ?_I2C_Master_write:	; 0 bytes @ 0x0
+   162                           	global	?_I2C_Master_stop
+   163  0070                     ?_I2C_Master_stop:	; 0 bytes @ 0x0
+   164                           	global	??_I2C_Master_stop
+   165  0070                     ??_I2C_Master_stop:	; 0 bytes @ 0x0
+   166                           	global	?_main
+   167  0070                     ?_main:	; 0 bytes @ 0x0
+   168                           	global	?_lcd_send_cmd
+   169  0070                     ?_lcd_send_cmd:	; 0 bytes @ 0x0
+   170                           	global	?_lcd_send_data
+   171  0070                     ?_lcd_send_data:	; 0 bytes @ 0x0
+   172                           	global	I2C_Master_write@data
+   173  0070                     I2C_Master_write@data:	; 2 bytes @ 0x0
+   174  0070                     	ds	2
+   175                           	global	??_I2C_Master_write
+   176  0072                     ??_I2C_Master_write:	; 0 bytes @ 0x2
+   177                           	global	??_lcd_send_cmd
+   178  0072                     ??_lcd_send_cmd:	; 0 bytes @ 0x2
+   179                           	global	??_lcd_send_data
+   180  0072                     ??_lcd_send_data:	; 0 bytes @ 0x2
+   181  0072                     	ds	2
+   182                           	global	??_I2C_init
+   183  0074                     ??_I2C_init:	; 0 bytes @ 0x4
+   184                           	global	lcd_send_cmd@data
+   185  0074                     lcd_send_cmd@data:	; 1 bytes @ 0x4
+   186                           	global	lcd_send_data@data
+   187  0074                     lcd_send_data@data:	; 1 bytes @ 0x4
+   188  0074                     	ds	1
+   189                           	global	lcd_send_cmd@data_l
+   190  0075                     lcd_send_cmd@data_l:	; 1 bytes @ 0x5
+   191                           	global	lcd_send_data@data_l
+   192  0075                     lcd_send_data@data_l:	; 1 bytes @ 0x5
+   193  0075                     	ds	1
+   194                           	global	lcd_send_cmd@data_u
+   195  0076                     lcd_send_cmd@data_u:	; 1 bytes @ 0x6
+   196                           	global	lcd_send_data@data_u
+   197  0076                     lcd_send_data@data_u:	; 1 bytes @ 0x6
+   198  0076                     	ds	1
+   199                           	global	??_lcd_init
+   200  0077                     ??_lcd_init:	; 0 bytes @ 0x7
+   201                           	global	??_lcd_send_string
+   202  0077                     ??_lcd_send_string:	; 0 bytes @ 0x7
+   203  0077                     	ds	1
+   204                           	global	lcd_send_string@str
+   205  0078                     lcd_send_string@str:	; 1 bytes @ 0x8
+   206  0078                     	ds	1
+   207                           	global	??_main
+   208  0079                     ??_main:	; 0 bytes @ 0x9
+   209 ;;Data sizes: Strings 7, constant 0, data 0, bss 4, persistent 0 stack 0
+   210 ;;Auto spaces:   Size  Autos    Used
+   211 ;; COMMON          14      9      13
+   212 ;; BANK0           80      0       0
+   213 ;; BANK1           80      0       0
+   214 ;; BANK3           96      0       0
+   215 ;; BANK2           96      0       0
+   216                           
+   217 ;;
+   218 ;; Pointer list with targets:
+   219                           
+   220 ;; lcd_send_string@str	PTR unsigned char  size(1) Largest target is 7
+   221 ;;		 -> STR_1(CODE[7]), 
+   222 ;;
+   223                           
+   224                           
+   225 ;;
+   226 ;; Critical Paths under _main in COMMON
+   227 ;;
+   228 ;;   _main->_lcd_send_string
+   229 ;;   _lcd_send_string->_lcd_send_data
+   230 ;;   _lcd_init->_lcd_send_cmd
+   231 ;;   _lcd_send_data->_I2C_Master_write
+   232 ;;   _lcd_send_cmd->_I2C_Master_write
+   233 ;;
+   234 ;; Critical Paths under _main in BANK0
+   235 ;;
+   236 ;;   None.
+   237 ;;
+   238 ;; Critical Paths under _main in BANK1
+   239 ;;
+   240 ;;   None.
+   241 ;;
+   242 ;; Critical Paths under _main in BANK3
+   243 ;;
+   244 ;;   None.
+   245 ;;
+   246 ;; Critical Paths under _main in BANK2
+   247 ;;
+   248 ;;   None.
+   249                           
+   250 ;;
+   251 ;;Main: autosize = 0, tempsize = 0, incstack = 0, save=0
+   252 ;;
+   253                           
+   254 ;;
+   255 ;;Call Graph Tables:
+   256 ;;
+   257 ;; ---------------------------------------------------------------------------------
+   258 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
+   259 ;; ---------------------------------------------------------------------------------
+   260 ;; (0) _main                                                 0     0      0     240
+   261 ;;                           _I2C_init
+   262 ;;                           _lcd_init
+   263 ;;                    _lcd_send_string
+   264 ;; ---------------------------------------------------------------------------------
+   265 ;; (1) _lcd_send_string                                      2     2      0     135
+   266 ;;                                              7 COMMON     2     2      0
+   267 ;;                      _lcd_send_data
+   268 ;; ---------------------------------------------------------------------------------
+   269 ;; (1) _lcd_init                                             0     0      0     105
+   270 ;;                       _lcd_send_cmd
+   271 ;; ---------------------------------------------------------------------------------
+   272 ;; (2) _lcd_send_data                                        5     5      0     105
+   273 ;;                                              2 COMMON     5     5      0
+   274 ;;                   _I2C_Master_start
+   275 ;;                   _I2C_Master_write
+   276 ;;                    _I2C_Master_stop
+   277 ;; ---------------------------------------------------------------------------------
+   278 ;; (2) _lcd_send_cmd                                         5     5      0     105
+   279 ;;                                              2 COMMON     5     5      0
+   280 ;;                   _I2C_Master_start
+   281 ;;                   _I2C_Master_write
+   282 ;;                    _I2C_Master_stop
+   283 ;; ---------------------------------------------------------------------------------
+   284 ;; (3) _I2C_Master_stop                                      0     0      0       0
+   285 ;; ---------------------------------------------------------------------------------
+   286 ;; (3) _I2C_Master_write                                     2     0      2      15
+   287 ;;                                              0 COMMON     2     0      2
+   288 ;; ---------------------------------------------------------------------------------
+   289 ;; (3) _I2C_Master_start                                     0     0      0       0
+   290 ;; ---------------------------------------------------------------------------------
+   291 ;; (1) _I2C_init                                             4     0      4       0
+   292 ;;                                              0 COMMON     4     0      4
+   293 ;; ---------------------------------------------------------------------------------
+   294 ;; Estimated maximum stack depth 3
+   295 ;; ---------------------------------------------------------------------------------
+   296                           
+   297 ;; Call Graph Graphs:
+   298                           
+   299 ;; _main (ROOT)
+   300 ;;   _I2C_init
+   301 ;;   _lcd_init
+   302 ;;     _lcd_send_cmd
+   303 ;;       _I2C_Master_start
+   304 ;;       _I2C_Master_write
+   305 ;;       _I2C_Master_stop
+   306 ;;   _lcd_send_string
+   307 ;;     _lcd_send_data
+   308 ;;       _I2C_Master_start
+   309 ;;       _I2C_Master_write
+   310 ;;       _I2C_Master_stop
+   311 ;;
+   312                           
+   313 ;; Address spaces:
+   314                           
+   315 ;;Name               Size   Autos  Total    Cost      Usage
+   316 ;;BITCOMMON            E      0       0       0        0.0%
+   317 ;;EEDATA             100      0       0       0        0.0%
+   318 ;;NULL                 0      0       0       0        0.0%
+   319 ;;CODE                 0      0       0       0        0.0%
+   320 ;;COMMON               E      9       D       1       92.9%
+   321 ;;BITSFR0              0      0       0       1        0.0%
+   322 ;;SFR0                 0      0       0       1        0.0%
+   323 ;;BITSFR1              0      0       0       2        0.0%
+   324 ;;SFR1                 0      0       0       2        0.0%
+   325 ;;STACK                0      0       3       2        0.0%
+   326 ;;ABS                  0      0       D       3        0.0%
+   327 ;;BITBANK0            50      0       0       4        0.0%
+   328 ;;BITSFR3              0      0       0       4        0.0%
+   329 ;;SFR3                 0      0       0       4        0.0%
+   330 ;;BANK0               50      0       0       5        0.0%
+   331 ;;BITSFR2              0      0       0       5        0.0%
+   332 ;;SFR2                 0      0       0       5        0.0%
+   333 ;;BITBANK1            50      0       0       6        0.0%
+   334 ;;BANK1               50      0       0       7        0.0%
+   335 ;;BITBANK3            60      0       0       8        0.0%
+   336 ;;BANK3               60      0       0       9        0.0%
+   337 ;;BITBANK2            60      0       0      10        0.0%
+   338 ;;BANK2               60      0       0      11        0.0%
+   339 ;;DATA                 0      0      10      12        0.0%
+   340                           
+   341                           	global	_main
+   342                           psect	maintext,global,class=CODE,delta=2
+   343                           global __pmaintext
+   344  0718                     __pmaintext:
+   345                           
+   346 ;; *************** function _main *****************
+   347 ;; Defined at:
+   348 ;;		line 24 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+   349 ;; Parameters:    Size  Location     Type
+   350 ;;		None
+   351 ;; Auto vars:     Size  Location     Type
+   352 ;;		None
+   353 ;; Return value:  Size  Location     Type
+   354 ;;		None               void
+   355 ;; Registers used:
+   356 ;;		wreg, fsr0l, fsr0h, status,2, status,0, pclath, cstack
+   357 ;; Tracked objects:
+   358 ;;		On entry : 17F/0
+   359 ;;		On exit  : 0/0
+   360 ;;		Unchanged: 0/0
+   361 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   362 ;;      Params:         0       0       0       0       0
+   363 ;;      Locals:         0       0       0       0       0
+   364 ;;      Temps:          0       0       0       0       0
+   365 ;;      Totals:         0       0       0       0       0
+   366 ;;Total ram usage:        0 bytes
+   367 ;; Hardware stack levels required when called:    3
+   368 ;; This function calls:
+   369 ;;		_I2C_init
+   370 ;;		_lcd_init
+   371 ;;		_lcd_send_string
+   372 ;; This function is called by:
+   373 ;;		Startup code after reset
+   374 ;; This function uses a non-reentrant model
+   375 ;;
+   376                           psect	maintext
+   377                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+   378                           	line	24
+   379                           	global	__size_of_main
+   380  0030                     	__size_of_main	equ	__end_of_main-_main
+   381                           	
+   382  0718                     _main:	
+   383                           	opt	stack 5
+   384                           ; Regs used in _main: [wreg-fsr0h+status,2+status,0+pclath+cstack]
+   385                           	line	25
+   386                           	
+   387  0718                     l1858:	
+   388                           ;main.c: 25: TRISC = 0Xff;
+   389  0718  30FF               	movlw	(0FFh)
+   390  0719  1683               	bsf	status, 5	;RP0=1, select bank1
+   391  071A  1303               	bcf	status, 6	;RP1=0, select bank1
+   392  071B  0087               	movwf	(135)^080h	;volatile
+   393                           	line	26
+   394                           	
+   395  071C                     l1860:	
+   396                           ;main.c: 26: PORTC = 0X00;
+   397  071C  1283               	bcf	status, 5	;RP0=0, select bank0
+   398  071D  1303               	bcf	status, 6	;RP1=0, select bank0
+   399  071E  0187               	clrf	(7)	;volatile
+   400                           	line	28
+   401                           	
+   402  071F                     l1862:	
+   403                           ;main.c: 28: TRISB = 0X00;
+   404  071F  1683               	bsf	status, 5	;RP0=1, select bank1
+   405  0720  1303               	bcf	status, 6	;RP1=0, select bank1
+   406  0721  0186               	clrf	(134)^080h	;volatile
+   407                           	line	29
+   408                           	
+   409  0722                     l1864:	
+   410                           ;main.c: 29: PORTB = 0X00;
+   411  0722  1283               	bcf	status, 5	;RP0=0, select bank0
+   412  0723  1303               	bcf	status, 6	;RP1=0, select bank0
+   413  0724  0186               	clrf	(6)	;volatile
+   414                           	line	31
+   415                           	
+   416  0725                     l1866:	
+   417                           ;main.c: 31: TRISD = 0X00;
+   418  0725  1683               	bsf	status, 5	;RP0=1, select bank1
+   419  0726  1303               	bcf	status, 6	;RP1=0, select bank1
+   420  0727  0188               	clrf	(136)^080h	;volatile
+   421                           	line	32
+   422                           	
+   423  0728                     l1868:	
+   424                           ;main.c: 32: PORTD = 0X00;
+   425  0728  1283               	bcf	status, 5	;RP0=0, select bank0
+   426  0729  1303               	bcf	status, 6	;RP1=0, select bank0
+   427  072A  0188               	clrf	(8)	;volatile
+   428                           	line	35
+   429                           	
+   430  072B                     l1870:	
+   431                           ;main.c: 35: I2C_init (100000);
+   432  072B  3000               	movlw	0
+   433  072C  00F3               	movwf	(?_I2C_init+3)
+   434  072D  3001               	movlw	01h
+   435  072E  00F2               	movwf	(?_I2C_init+2)
+   436  072F  3086               	movlw	086h
+   437  0730  00F1               	movwf	(?_I2C_init+1)
+   438  0731  30A0               	movlw	0A0h
+   439  0732  00F0               	movwf	(?_I2C_init)
+   440                           
+   441  0733  120A  118A  26D2   	fcall	_I2C_init
+              120A  118A         
+   442                           	line	36
+   443                           	
+   444  0738                     l1872:	
+   445                           ;main.c: 36: lcd_init ();
+   446  0738  120A  118A  26DE   	fcall	_lcd_init
+              120A  118A         
+   447                           	line	38
+   448                           	
+   449  073D                     l1874:	
+   450                           ;main.c: 38: lcd_send_string ("MUGESH");
+   451  073D  3001               	movlw	((STR_1-__stringbase))&0ffh
+   452  073E  120A  118A  26F7   	fcall	_lcd_send_string
+              120A  118A         
+   453  0743  2F44               	goto	l576
+   454                           	line	40
+   455                           ;main.c: 40: while(1){
+   456                           	
+   457  0744                     l575:	
+   458                           	line	41
+   459                           	
+   460  0744                     l576:	
+   461                           	line	40
+   462  0744  2F44               	goto	l576
+   463                           	
+   464  0745                     l577:	
+   465                           	line	42
+   466                           	
+   467  0745                     l578:	
+   468                           	global	start
+   469  0745  120A  118A  2800   	ljmp	start
+   470                           	opt stack 0
+   471                           GLOBAL	__end_of_main
+   472  0748                     	__end_of_main:
+   473 ;; =============== function _main ends ============
+   474                           
+   475                           	signat	_main,88
+   476                           	global	_lcd_send_string
+   477                           psect	text125,local,class=CODE,delta=2
+   478                           global __ptext125
+   479  06F7                     __ptext125:
+   480                           
+   481 ;; *************** function _lcd_send_string *****************
+   482 ;; Defined at:
+   483 ;;		line 86 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+   484 ;; Parameters:    Size  Location     Type
+   485 ;;  str             1    wreg     PTR unsigned char 
+   486 ;;		 -> STR_1(7), 
+   487 ;; Auto vars:     Size  Location     Type
+   488 ;;  str             1    8[COMMON] PTR unsigned char 
+   489 ;;		 -> STR_1(7), 
+   490 ;; Return value:  Size  Location     Type
+   491 ;;		None               void
+   492 ;; Registers used:
+   493 ;;		wreg, fsr0l, fsr0h, status,2, status,0, pclath, cstack
+   494 ;; Tracked objects:
+   495 ;;		On entry : 0/0
+   496 ;;		On exit  : 0/0
+   497 ;;		Unchanged: 0/0
+   498 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   499 ;;      Params:         0       0       0       0       0
+   500 ;;      Locals:         1       0       0       0       0
+   501 ;;      Temps:          1       0       0       0       0
+   502 ;;      Totals:         2       0       0       0       0
+   503 ;;Total ram usage:        2 bytes
+   504 ;; Hardware stack levels used:    1
+   505 ;; Hardware stack levels required when called:    2
+   506 ;; This function calls:
+   507 ;;		_lcd_send_data
+   508 ;; This function is called by:
+   509 ;;		_main
+   510 ;; This function uses a non-reentrant model
+   511 ;;
+   512                           psect	text125
+   513                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+   514                           	line	86
+   515                           	global	__size_of_lcd_send_string
+   516  0021                     	__size_of_lcd_send_string	equ	__end_of_lcd_send_string-_lcd_send_string
+   517                           	
+   518  06F7                     _lcd_send_string:	
+   519                           	opt	stack 5
+   520                           ; Regs used in _lcd_send_string: [wreg-fsr0h+status,2+status,0+pclath+cstack]
+   521                           ;lcd_send_string@str stored from wreg
+   522  06F7  00F8               	movwf	(lcd_send_string@str)
+   523                           	line	87
+   524                           	
+   525  06F8                     l1850:	
+   526                           ;main.c: 87: while (*str) lcd_send_data (*str++);
+   527  06F8  2F0A               	goto	l1856
+   528                           	
+   529  06F9                     l591:	
+   530                           	
+   531  06F9                     l1852:	
+   532  06F9  0878               	movf	(lcd_send_string@str),w
+   533  06FA  0084               	movwf	fsr0
+   534  06FB  120A  118A  2003   	fcall	stringdir
+              120A  118A         
+   535  0700  120A  118A  27A4   	fcall	_lcd_send_data
+              120A  118A         
+   536                           	
+   537  0705                     l1854:	
+   538  0705  3001               	movlw	(01h)
+   539  0706  00F7               	movwf	(??_lcd_send_string+0)+0
+   540  0707  0877               	movf	(??_lcd_send_string+0)+0,w
+   541  0708  07F8               	addwf	(lcd_send_string@str),f
+   542  0709  2F0A               	goto	l1856
+   543                           	
+   544  070A                     l590:	
+   545                           	
+   546  070A                     l1856:	
+   547  070A  0878               	movf	(lcd_send_string@str),w
+   548  070B  0084               	movwf	fsr0
+   549  070C  120A  118A  2003   	fcall	stringdir
+              120A  118A         
+   550  0711  3800               	iorlw	0
+   551  0712  1D03               	skipz
+   552  0713  2F15               	goto	u2231
+   553  0714  2F16               	goto	u2230
+   554  0715                     u2231:
+   555  0715  2EF9               	goto	l1852
+   556  0716                     u2230:
+   557  0716  2F17               	goto	l593
+   558                           	
+   559  0717                     l592:	
+   560                           	line	88
+   561                           	
+   562  0717                     l593:	
+   563  0717  0008               	return
+   564                           	opt stack 0
+   565                           GLOBAL	__end_of_lcd_send_string
+   566  0718                     	__end_of_lcd_send_string:
+   567 ;; =============== function _lcd_send_string ends ============
+   568                           
+   569                           	signat	_lcd_send_string,4216
+   570                           	global	_lcd_init
+   571                           psect	text126,local,class=CODE,delta=2
+   572                           global __ptext126
+   573  06DE                     __ptext126:
+   574                           
+   575 ;; *************** function _lcd_init *****************
+   576 ;; Defined at:
+   577 ;;		line 91 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+   578 ;; Parameters:    Size  Location     Type
+   579 ;;		None
+   580 ;; Auto vars:     Size  Location     Type
+   581 ;;		None
+   582 ;; Return value:  Size  Location     Type
+   583 ;;		None               void
+   584 ;; Registers used:
+   585 ;;		wreg, status,2, status,0, pclath, cstack
+   586 ;; Tracked objects:
+   587 ;;		On entry : 0/0
+   588 ;;		On exit  : 0/0
+   589 ;;		Unchanged: 0/0
+   590 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   591 ;;      Params:         0       0       0       0       0
+   592 ;;      Locals:         0       0       0       0       0
+   593 ;;      Temps:          0       0       0       0       0
+   594 ;;      Totals:         0       0       0       0       0
+   595 ;;Total ram usage:        0 bytes
+   596 ;; Hardware stack levels used:    1
+   597 ;; Hardware stack levels required when called:    2
+   598 ;; This function calls:
+   599 ;;		_lcd_send_cmd
+   600 ;; This function is called by:
+   601 ;;		_main
+   602 ;; This function uses a non-reentrant model
+   603 ;;
+   604                           psect	text126
+   605                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+   606                           	line	91
+   607                           	global	__size_of_lcd_init
+   608  0019                     	__size_of_lcd_init	equ	__end_of_lcd_init-_lcd_init
+   609                           	
+   610  06DE                     _lcd_init:	
+   611                           	opt	stack 5
+   612                           ; Regs used in _lcd_init: [wreg+status,2+status,0+pclath+cstack]
+   613                           	line	92
+   614                           	
+   615  06DE                     l1848:	
+   616                           ;main.c: 92: lcd_send_cmd (0x02);
+   617  06DE  3002               	movlw	(02h)
+   618  06DF  120A  118A  2748   	fcall	_lcd_send_cmd
+              120A  118A         
+   619                           	line	93
+   620                           ;main.c: 93: lcd_send_cmd (0x28);
+   621  06E4  3028               	movlw	(028h)
+   622  06E5  120A  118A  2748   	fcall	_lcd_send_cmd
+              120A  118A         
+   623                           	line	94
+   624                           ;main.c: 94: lcd_send_cmd (0x0c);
+   625  06EA  300C               	movlw	(0Ch)
+   626  06EB  120A  118A  2748   	fcall	_lcd_send_cmd
+              120A  118A         
+   627                           	line	95
+   628                           ;main.c: 95: lcd_send_cmd (0x80);
+   629  06F0  3080               	movlw	(080h)
+   630  06F1  120A  118A  2748   	fcall	_lcd_send_cmd
+              120A  118A         
+   631                           	line	96
+   632                           	
+   633  06F6                     l596:	
+   634  06F6  0008               	return
+   635                           	opt stack 0
+   636                           GLOBAL	__end_of_lcd_init
+   637  06F7                     	__end_of_lcd_init:
+   638 ;; =============== function _lcd_init ends ============
+   639                           
+   640                           	signat	_lcd_init,88
+   641                           	global	_lcd_send_data
+   642                           psect	text127,local,class=CODE,delta=2
+   643                           global __ptext127
+   644  07A4                     __ptext127:
+   645                           
+   646 ;; *************** function _lcd_send_data *****************
+   647 ;; Defined at:
+   648 ;;		line 69 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+   649 ;; Parameters:    Size  Location     Type
+   650 ;;  data            1    wreg     unsigned char 
+   651 ;; Auto vars:     Size  Location     Type
+   652 ;;  data            1    4[COMMON] unsigned char 
+   653 ;;  data_u          1    6[COMMON] unsigned char 
+   654 ;;  data_l          1    5[COMMON] unsigned char 
+   655 ;; Return value:  Size  Location     Type
+   656 ;;		None               void
+   657 ;; Registers used:
+   658 ;;		wreg, status,2, status,0, pclath, cstack
+   659 ;; Tracked objects:
+   660 ;;		On entry : 0/0
+   661 ;;		On exit  : 0/0
+   662 ;;		Unchanged: 0/0
+   663 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   664 ;;      Params:         0       0       0       0       0
+   665 ;;      Locals:         3       0       0       0       0
+   666 ;;      Temps:          2       0       0       0       0
+   667 ;;      Totals:         5       0       0       0       0
+   668 ;;Total ram usage:        5 bytes
+   669 ;; Hardware stack levels used:    1
+   670 ;; Hardware stack levels required when called:    1
+   671 ;; This function calls:
+   672 ;;		_I2C_Master_start
+   673 ;;		_I2C_Master_write
+   674 ;;		_I2C_Master_stop
+   675 ;; This function is called by:
+   676 ;;		_lcd_send_string
+   677 ;; This function uses a non-reentrant model
+   678 ;;
+   679                           psect	text127
+   680                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+   681                           	line	69
+   682                           	global	__size_of_lcd_send_data
+   683  005C                     	__size_of_lcd_send_data	equ	__end_of_lcd_send_data-_lcd_send_data
+   684                           	
+   685  07A4                     _lcd_send_data:	
+   686                           	opt	stack 5
+   687                           ; Regs used in _lcd_send_data: [wreg+status,2+status,0+pclath+cstack]
+   688                           ;lcd_send_data@data stored from wreg
+   689                           	line	71
+   690  07A4  00F4               	movwf	(lcd_send_data@data)
+   691                           	
+   692  07A5                     l1830:	
+   693                           ;main.c: 70: unsigned char data_l, data_u;
+   694                           ;main.c: 71: data_l = (data<<4)&0xf0;
+   695  07A5  0874               	movf	(lcd_send_data@data),w
+   696  07A6  00F2               	movwf	(??_lcd_send_data+0)+0
+   697  07A7  3003               	movlw	(04h)-1
+   698  07A8                     u2225:
+   699  07A8  1003               	clrc
+   700  07A9  0DF2               	rlf	(??_lcd_send_data+0)+0,f
+   701  07AA  3EFF               	addlw	-1
+   702  07AB  1D03               	skipz
+   703  07AC  2FA8               	goto	u2225
+   704  07AD  1003               	clrc
+   705  07AE  0D72               	rlf	(??_lcd_send_data+0)+0,w
+   706  07AF  39F0               	andlw	0F0h
+   707  07B0  00F3               	movwf	(??_lcd_send_data+1)+0
+   708  07B1  0873               	movf	(??_lcd_send_data+1)+0,w
+   709  07B2  00F5               	movwf	(lcd_send_data@data_l)
+   710                           	line	72
+   711                           	
+   712  07B3                     l1832:	
+   713                           ;main.c: 72: data_u = data&0xf0;
+   714  07B3  0874               	movf	(lcd_send_data@data),w
+   715  07B4  39F0               	andlw	0F0h
+   716  07B5  00F2               	movwf	(??_lcd_send_data+0)+0
+   717  07B6  0872               	movf	(??_lcd_send_data+0)+0,w
+   718  07B7  00F6               	movwf	(lcd_send_data@data_u)
+   719                           	line	74
+   720                           	
+   721  07B8                     l1834:	
+   722                           ;main.c: 74: I2C_Master_start();
+   723  07B8  120A  118A  26B1   	fcall	_I2C_Master_start
+              120A  118A         
+   724                           	line	75
+   725                           	
+   726  07BD                     l1836:	
+   727                           ;main.c: 75: I2C_Master_write (0x42);
+   728  07BD  3042               	movlw	low(042h)
+   729  07BE  00F0               	movwf	(?_I2C_Master_write)
+   730  07BF  3000               	movlw	high(042h)
+   731  07C0  00F1               	movwf	((?_I2C_Master_write))+1
+   732  07C1  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   733                           	line	76
+   734                           	
+   735  07C6                     l1838:	
+   736                           ;main.c: 76: I2C_Master_write (data_u|0x0D);
+   737  07C6  0876               	movf	(lcd_send_data@data_u),w
+   738  07C7  00F2               	movwf	(??_lcd_send_data+0)+0
+   739  07C8  01F3               	clrf	(??_lcd_send_data+0)+0+1
+   740  07C9  300D               	movlw	0Dh
+   741  07CA  0472               	iorwf	0+(??_lcd_send_data+0)+0,w
+   742  07CB  00F0               	movwf	(?_I2C_Master_write)
+   743  07CC  0873               	movf	1+(??_lcd_send_data+0)+0,w
+   744  07CD  00F1               	movwf	1+(?_I2C_Master_write)
+   745  07CE  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   746                           	line	77
+   747                           	
+   748  07D3                     l1840:	
+   749                           ;main.c: 77: I2C_Master_write (data_u|0x09);
+   750  07D3  0876               	movf	(lcd_send_data@data_u),w
+   751  07D4  00F2               	movwf	(??_lcd_send_data+0)+0
+   752  07D5  01F3               	clrf	(??_lcd_send_data+0)+0+1
+   753  07D6  3009               	movlw	09h
+   754  07D7  0472               	iorwf	0+(??_lcd_send_data+0)+0,w
+   755  07D8  00F0               	movwf	(?_I2C_Master_write)
+   756  07D9  0873               	movf	1+(??_lcd_send_data+0)+0,w
+   757  07DA  00F1               	movwf	1+(?_I2C_Master_write)
+   758  07DB  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   759                           	line	79
+   760                           	
+   761  07E0                     l1842:	
+   762                           ;main.c: 79: I2C_Master_write (data_l|0x0D);
+   763  07E0  0875               	movf	(lcd_send_data@data_l),w
+   764  07E1  00F2               	movwf	(??_lcd_send_data+0)+0
+   765  07E2  01F3               	clrf	(??_lcd_send_data+0)+0+1
+   766  07E3  300D               	movlw	0Dh
+   767  07E4  0472               	iorwf	0+(??_lcd_send_data+0)+0,w
+   768  07E5  00F0               	movwf	(?_I2C_Master_write)
+   769  07E6  0873               	movf	1+(??_lcd_send_data+0)+0,w
+   770  07E7  00F1               	movwf	1+(?_I2C_Master_write)
+   771  07E8  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   772                           	line	80
+   773                           	
+   774  07ED                     l1844:	
+   775                           ;main.c: 80: I2C_Master_write (data_l|0x09);
+   776  07ED  0875               	movf	(lcd_send_data@data_l),w
+   777  07EE  00F2               	movwf	(??_lcd_send_data+0)+0
+   778  07EF  01F3               	clrf	(??_lcd_send_data+0)+0+1
+   779  07F0  3009               	movlw	09h
+   780  07F1  0472               	iorwf	0+(??_lcd_send_data+0)+0,w
+   781  07F2  00F0               	movwf	(?_I2C_Master_write)
+   782  07F3  0873               	movf	1+(??_lcd_send_data+0)+0,w
+   783  07F4  00F1               	movwf	1+(?_I2C_Master_write)
+   784  07F5  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   785                           	line	82
+   786                           	
+   787  07FA                     l1846:	
+   788                           ;main.c: 82: I2C_Master_stop();
+   789  07FA  120A  118A  26C7   	fcall	_I2C_Master_stop
+              120A  118A         
+   790                           	line	83
+   791                           	
+   792  07FF                     l587:	
+   793  07FF  0008               	return
+   794                           	opt stack 0
+   795                           GLOBAL	__end_of_lcd_send_data
+   796  0800                     	__end_of_lcd_send_data:
+   797 ;; =============== function _lcd_send_data ends ============
+   798                           
+   799                           	signat	_lcd_send_data,4216
+   800                           	global	_lcd_send_cmd
+   801                           psect	text128,local,class=CODE,delta=2
+   802                           global __ptext128
+   803  0748                     __ptext128:
+   804                           
+   805 ;; *************** function _lcd_send_cmd *****************
+   806 ;; Defined at:
+   807 ;;		line 52 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+   808 ;; Parameters:    Size  Location     Type
+   809 ;;  data            1    wreg     unsigned char 
+   810 ;; Auto vars:     Size  Location     Type
+   811 ;;  data            1    4[COMMON] unsigned char 
+   812 ;;  data_u          1    6[COMMON] unsigned char 
+   813 ;;  data_l          1    5[COMMON] unsigned char 
+   814 ;; Return value:  Size  Location     Type
+   815 ;;		None               void
+   816 ;; Registers used:
+   817 ;;		wreg, status,2, status,0, pclath, cstack
+   818 ;; Tracked objects:
+   819 ;;		On entry : 0/0
+   820 ;;		On exit  : 0/0
+   821 ;;		Unchanged: 0/0
+   822 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   823 ;;      Params:         0       0       0       0       0
+   824 ;;      Locals:         3       0       0       0       0
+   825 ;;      Temps:          2       0       0       0       0
+   826 ;;      Totals:         5       0       0       0       0
+   827 ;;Total ram usage:        5 bytes
+   828 ;; Hardware stack levels used:    1
+   829 ;; Hardware stack levels required when called:    1
+   830 ;; This function calls:
+   831 ;;		_I2C_Master_start
+   832 ;;		_I2C_Master_write
+   833 ;;		_I2C_Master_stop
+   834 ;; This function is called by:
+   835 ;;		_lcd_init
+   836 ;; This function uses a non-reentrant model
+   837 ;;
+   838                           psect	text128
+   839                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+   840                           	line	52
+   841                           	global	__size_of_lcd_send_cmd
+   842  005C                     	__size_of_lcd_send_cmd	equ	__end_of_lcd_send_cmd-_lcd_send_cmd
+   843                           	
+   844  0748                     _lcd_send_cmd:	
+   845                           	opt	stack 5
+   846                           ; Regs used in _lcd_send_cmd: [wreg+status,2+status,0+pclath+cstack]
+   847                           ;lcd_send_cmd@data stored from wreg
+   848                           	line	54
+   849  0748  00F4               	movwf	(lcd_send_cmd@data)
+   850                           	
+   851  0749                     l1812:	
+   852                           ;main.c: 53: unsigned char data_l, data_u;
+   853                           ;main.c: 54: data_l = (data<<4)&0xf0;
+   854  0749  0874               	movf	(lcd_send_cmd@data),w
+   855  074A  00F2               	movwf	(??_lcd_send_cmd+0)+0
+   856  074B  3003               	movlw	(04h)-1
+   857  074C                     u2215:
+   858  074C  1003               	clrc
+   859  074D  0DF2               	rlf	(??_lcd_send_cmd+0)+0,f
+   860  074E  3EFF               	addlw	-1
+   861  074F  1D03               	skipz
+   862  0750  2F4C               	goto	u2215
+   863  0751  1003               	clrc
+   864  0752  0D72               	rlf	(??_lcd_send_cmd+0)+0,w
+   865  0753  39F0               	andlw	0F0h
+   866  0754  00F3               	movwf	(??_lcd_send_cmd+1)+0
+   867  0755  0873               	movf	(??_lcd_send_cmd+1)+0,w
+   868  0756  00F5               	movwf	(lcd_send_cmd@data_l)
+   869                           	line	55
+   870                           	
+   871  0757                     l1814:	
+   872                           ;main.c: 55: data_u = data&0xf0;
+   873  0757  0874               	movf	(lcd_send_cmd@data),w
+   874  0758  39F0               	andlw	0F0h
+   875  0759  00F2               	movwf	(??_lcd_send_cmd+0)+0
+   876  075A  0872               	movf	(??_lcd_send_cmd+0)+0,w
+   877  075B  00F6               	movwf	(lcd_send_cmd@data_u)
+   878                           	line	57
+   879                           	
+   880  075C                     l1816:	
+   881                           ;main.c: 57: I2C_Master_start();
+   882  075C  120A  118A  26B1   	fcall	_I2C_Master_start
+              120A  118A         
+   883                           	line	58
+   884                           	
+   885  0761                     l1818:	
+   886                           ;main.c: 58: I2C_Master_write (0x42);
+   887  0761  3042               	movlw	low(042h)
+   888  0762  00F0               	movwf	(?_I2C_Master_write)
+   889  0763  3000               	movlw	high(042h)
+   890  0764  00F1               	movwf	((?_I2C_Master_write))+1
+   891  0765  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   892                           	line	59
+   893                           	
+   894  076A                     l1820:	
+   895                           ;main.c: 59: I2C_Master_write (data_u|0x0C);
+   896  076A  0876               	movf	(lcd_send_cmd@data_u),w
+   897  076B  00F2               	movwf	(??_lcd_send_cmd+0)+0
+   898  076C  01F3               	clrf	(??_lcd_send_cmd+0)+0+1
+   899  076D  300C               	movlw	0Ch
+   900  076E  0472               	iorwf	0+(??_lcd_send_cmd+0)+0,w
+   901  076F  00F0               	movwf	(?_I2C_Master_write)
+   902  0770  0873               	movf	1+(??_lcd_send_cmd+0)+0,w
+   903  0771  00F1               	movwf	1+(?_I2C_Master_write)
+   904  0772  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   905                           	line	60
+   906                           	
+   907  0777                     l1822:	
+   908                           ;main.c: 60: I2C_Master_write(data_u|0x08);
+   909  0777  0876               	movf	(lcd_send_cmd@data_u),w
+   910  0778  00F2               	movwf	(??_lcd_send_cmd+0)+0
+   911  0779  01F3               	clrf	(??_lcd_send_cmd+0)+0+1
+   912  077A  3008               	movlw	08h
+   913  077B  0472               	iorwf	0+(??_lcd_send_cmd+0)+0,w
+   914  077C  00F0               	movwf	(?_I2C_Master_write)
+   915  077D  0873               	movf	1+(??_lcd_send_cmd+0)+0,w
+   916  077E  00F1               	movwf	1+(?_I2C_Master_write)
+   917  077F  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   918                           	line	62
+   919                           	
+   920  0784                     l1824:	
+   921                           ;main.c: 62: I2C_Master_write(data_l|0x0C);
+   922  0784  0875               	movf	(lcd_send_cmd@data_l),w
+   923  0785  00F2               	movwf	(??_lcd_send_cmd+0)+0
+   924  0786  01F3               	clrf	(??_lcd_send_cmd+0)+0+1
+   925  0787  300C               	movlw	0Ch
+   926  0788  0472               	iorwf	0+(??_lcd_send_cmd+0)+0,w
+   927  0789  00F0               	movwf	(?_I2C_Master_write)
+   928  078A  0873               	movf	1+(??_lcd_send_cmd+0)+0,w
+   929  078B  00F1               	movwf	1+(?_I2C_Master_write)
+   930  078C  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   931                           	line	63
+   932                           	
+   933  0791                     l1826:	
+   934                           ;main.c: 63: I2C_Master_write(data_l|0x08);
+   935  0791  0875               	movf	(lcd_send_cmd@data_l),w
+   936  0792  00F2               	movwf	(??_lcd_send_cmd+0)+0
+   937  0793  01F3               	clrf	(??_lcd_send_cmd+0)+0+1
+   938  0794  3008               	movlw	08h
+   939  0795  0472               	iorwf	0+(??_lcd_send_cmd+0)+0,w
+   940  0796  00F0               	movwf	(?_I2C_Master_write)
+   941  0797  0873               	movf	1+(??_lcd_send_cmd+0)+0,w
+   942  0798  00F1               	movwf	1+(?_I2C_Master_write)
+   943  0799  120A  118A  26BC   	fcall	_I2C_Master_write
+              120A  118A         
+   944                           	line	65
+   945                           	
+   946  079E                     l1828:	
+   947                           ;main.c: 65: I2C_Master_stop();
+   948  079E  120A  118A  26C7   	fcall	_I2C_Master_stop
+              120A  118A         
+   949                           	line	66
+   950                           	
+   951  07A3                     l584:	
+   952  07A3  0008               	return
+   953                           	opt stack 0
+   954                           GLOBAL	__end_of_lcd_send_cmd
+   955  07A4                     	__end_of_lcd_send_cmd:
+   956 ;; =============== function _lcd_send_cmd ends ============
+   957                           
+   958                           	signat	_lcd_send_cmd,4216
+   959                           	global	_I2C_Master_stop
+   960                           psect	text129,local,class=CODE,delta=2
+   961                           global __ptext129
+   962  06C7                     __ptext129:
+   963                           
+   964 ;; *************** function _I2C_Master_stop *****************
+   965 ;; Defined at:
+   966 ;;		line 106 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+   967 ;; Parameters:    Size  Location     Type
+   968 ;;		None
+   969 ;; Auto vars:     Size  Location     Type
+   970 ;;		None
+   971 ;; Return value:  Size  Location     Type
+   972 ;;		None               void
+   973 ;; Registers used:
+   974 ;;		None
+   975 ;; Tracked objects:
+   976 ;;		On entry : 0/0
+   977 ;;		On exit  : 0/0
+   978 ;;		Unchanged: 0/0
+   979 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+   980 ;;      Params:         0       0       0       0       0
+   981 ;;      Locals:         0       0       0       0       0
+   982 ;;      Temps:          0       0       0       0       0
+   983 ;;      Totals:         0       0       0       0       0
+   984 ;;Total ram usage:        0 bytes
+   985 ;; Hardware stack levels used:    1
+   986 ;; This function calls:
+   987 ;;		Nothing
+   988 ;; This function is called by:
+   989 ;;		_lcd_send_cmd
+   990 ;;		_lcd_send_data
+   991 ;; This function uses a non-reentrant model
+   992 ;;
+   993                           psect	text129
+   994                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+   995                           	line	106
+   996                           	global	__size_of_I2C_Master_stop
+   997  000B                     	__size_of_I2C_Master_stop	equ	__end_of_I2C_Master_stop-_I2C_Master_stop
+   998                           	
+   999  06C7                     _I2C_Master_stop:	
+  1000                           	opt	stack 5
+  1001                           ; Regs used in _I2C_Master_stop: []
+  1002                           	line	107
+  1003                           	
+  1004  06C7                     l1014:	
+  1005                           ;main.c: 107: PEN = 1;
+  1006  06C7  1683               	bsf	status, 5	;RP0=1, select bank1
+  1007  06C8  1303               	bcf	status, 6	;RP1=0, select bank1
+  1008  06C9  1511               	bsf	(1162/8)^080h,(1162)&7
+  1009                           	line	108
+  1010                           ;main.c: 108: while(SSPIF == 0);
+  1011  06CA  2ECB               	goto	l605
+  1012                           	
+  1013  06CB                     l606:	
+  1014                           	
+  1015  06CB                     l605:	
+  1016  06CB  1283               	bcf	status, 5	;RP0=0, select bank0
+  1017  06CC  1D8C               	btfss	(99/8),(99)&7
+  1018  06CD  2ECF               	goto	u31
+  1019  06CE  2ED0               	goto	u30
+  1020  06CF                     u31:
+  1021  06CF  2ECB               	goto	l605
+  1022  06D0                     u30:
+  1023                           	
+  1024  06D0                     l607:	
+  1025                           	line	109
+  1026                           ;main.c: 109: SSPIF = 0;
+  1027  06D0  118C               	bcf	(99/8),(99)&7
+  1028                           	line	110
+  1029                           	
+  1030  06D1                     l608:	
+  1031  06D1  0008               	return
+  1032                           	opt stack 0
+  1033                           GLOBAL	__end_of_I2C_Master_stop
+  1034  06D2                     	__end_of_I2C_Master_stop:
+  1035 ;; =============== function _I2C_Master_stop ends ============
+  1036                           
+  1037                           	signat	_I2C_Master_stop,88
+  1038                           	global	_I2C_Master_write
+  1039                           psect	text130,local,class=CODE,delta=2
+  1040                           global __ptext130
+  1041  06BC                     __ptext130:
+  1042                           
+  1043 ;; *************** function _I2C_Master_write *****************
+  1044 ;; Defined at:
+  1045 ;;		line 120 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+  1046 ;; Parameters:    Size  Location     Type
+  1047 ;;  data            2    0[COMMON] unsigned int 
+  1048 ;; Auto vars:     Size  Location     Type
+  1049 ;;		None
+  1050 ;; Return value:  Size  Location     Type
+  1051 ;;		None               void
+  1052 ;; Registers used:
+  1053 ;;		wreg
+  1054 ;; Tracked objects:
+  1055 ;;		On entry : 0/0
+  1056 ;;		On exit  : 0/0
+  1057 ;;		Unchanged: 0/0
+  1058 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+  1059 ;;      Params:         2       0       0       0       0
+  1060 ;;      Locals:         0       0       0       0       0
+  1061 ;;      Temps:          0       0       0       0       0
+  1062 ;;      Totals:         2       0       0       0       0
+  1063 ;;Total ram usage:        2 bytes
+  1064 ;; Hardware stack levels used:    1
+  1065 ;; This function calls:
+  1066 ;;		Nothing
+  1067 ;; This function is called by:
+  1068 ;;		_lcd_send_cmd
+  1069 ;;		_lcd_send_data
+  1070 ;; This function uses a non-reentrant model
+  1071 ;;
+  1072                           psect	text130
+  1073                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+  1074                           	line	120
+  1075                           	global	__size_of_I2C_Master_write
+  1076  000B                     	__size_of_I2C_Master_write	equ	__end_of_I2C_Master_write-_I2C_Master_write
+  1077                           	
+  1078  06BC                     _I2C_Master_write:	
+  1079                           	opt	stack 5
+  1080                           ; Regs used in _I2C_Master_write: [wreg]
+  1081                           	line	121
+  1082                           	
+  1083  06BC                     l1012:	
+  1084                           ;main.c: 121: SSPBUF = data;
+  1085  06BC  0870               	movf	(I2C_Master_write@data),w
+  1086  06BD  1283               	bcf	status, 5	;RP0=0, select bank0
+  1087  06BE  1303               	bcf	status, 6	;RP1=0, select bank0
+  1088  06BF  0093               	movwf	(19)	;volatile
+  1089                           	line	122
+  1090                           ;main.c: 122: while(SSPIF == 0);
+  1091  06C0  2EC1               	goto	l617
+  1092                           	
+  1093  06C1                     l618:	
+  1094                           	
+  1095  06C1                     l617:	
+  1096  06C1  1D8C               	btfss	(99/8),(99)&7
+  1097  06C2  2EC4               	goto	u21
+  1098  06C3  2EC5               	goto	u20
+  1099  06C4                     u21:
+  1100  06C4  2EC1               	goto	l617
+  1101  06C5                     u20:
+  1102                           	
+  1103  06C5                     l619:	
+  1104                           	line	123
+  1105                           ;main.c: 123: SSPIF = 0;
+  1106  06C5  118C               	bcf	(99/8),(99)&7
+  1107                           	line	124
+  1108                           	
+  1109  06C6                     l620:	
+  1110  06C6  0008               	return
+  1111                           	opt stack 0
+  1112                           GLOBAL	__end_of_I2C_Master_write
+  1113  06C7                     	__end_of_I2C_Master_write:
+  1114 ;; =============== function _I2C_Master_write ends ============
+  1115                           
+  1116                           	signat	_I2C_Master_write,4216
+  1117                           	global	_I2C_Master_start
+  1118                           psect	text131,local,class=CODE,delta=2
+  1119                           global __ptext131
+  1120  06B1                     __ptext131:
+  1121                           
+  1122 ;; *************** function _I2C_Master_start *****************
+  1123 ;; Defined at:
+  1124 ;;		line 99 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+  1125 ;; Parameters:    Size  Location     Type
+  1126 ;;		None
+  1127 ;; Auto vars:     Size  Location     Type
+  1128 ;;		None
+  1129 ;; Return value:  Size  Location     Type
+  1130 ;;		None               void
+  1131 ;; Registers used:
+  1132 ;;		None
+  1133 ;; Tracked objects:
+  1134 ;;		On entry : 0/0
+  1135 ;;		On exit  : 0/0
+  1136 ;;		Unchanged: 0/0
+  1137 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+  1138 ;;      Params:         0       0       0       0       0
+  1139 ;;      Locals:         0       0       0       0       0
+  1140 ;;      Temps:          0       0       0       0       0
+  1141 ;;      Totals:         0       0       0       0       0
+  1142 ;;Total ram usage:        0 bytes
+  1143 ;; Hardware stack levels used:    1
+  1144 ;; This function calls:
+  1145 ;;		Nothing
+  1146 ;; This function is called by:
+  1147 ;;		_lcd_send_cmd
+  1148 ;;		_lcd_send_data
+  1149 ;; This function uses a non-reentrant model
+  1150 ;;
+  1151                           psect	text131
+  1152                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+  1153                           	line	99
+  1154                           	global	__size_of_I2C_Master_start
+  1155  000B                     	__size_of_I2C_Master_start	equ	__end_of_I2C_Master_start-_I2C_Master_start
+  1156                           	
+  1157  06B1                     _I2C_Master_start:	
+  1158                           	opt	stack 5
+  1159                           ; Regs used in _I2C_Master_start: []
+  1160                           	line	100
+  1161                           	
+  1162  06B1                     l1010:	
+  1163                           ;main.c: 100: SEN = 1;
+  1164  06B1  1683               	bsf	status, 5	;RP0=1, select bank1
+  1165  06B2  1303               	bcf	status, 6	;RP1=0, select bank1
+  1166  06B3  1411               	bsf	(1160/8)^080h,(1160)&7
+  1167                           	line	101
+  1168                           ;main.c: 101: while(SSPIF == 0);
+  1169  06B4  2EB5               	goto	l599
+  1170                           	
+  1171  06B5                     l600:	
+  1172                           	
+  1173  06B5                     l599:	
+  1174  06B5  1283               	bcf	status, 5	;RP0=0, select bank0
+  1175  06B6  1D8C               	btfss	(99/8),(99)&7
+  1176  06B7  2EB9               	goto	u11
+  1177  06B8  2EBA               	goto	u10
+  1178  06B9                     u11:
+  1179  06B9  2EB5               	goto	l599
+  1180  06BA                     u10:
+  1181                           	
+  1182  06BA                     l601:	
+  1183                           	line	102
+  1184                           ;main.c: 102: SSPIF = 0;
+  1185  06BA  118C               	bcf	(99/8),(99)&7
+  1186                           	line	103
+  1187                           	
+  1188  06BB                     l602:	
+  1189  06BB  0008               	return
+  1190                           	opt stack 0
+  1191                           GLOBAL	__end_of_I2C_Master_start
+  1192  06BC                     	__end_of_I2C_Master_start:
+  1193 ;; =============== function _I2C_Master_start ends ============
+  1194                           
+  1195                           	signat	_I2C_Master_start,88
+  1196                           	global	_I2C_init
+  1197                           psect	text132,local,class=CODE,delta=2
+  1198                           global __ptext132
+  1199  06D2                     __ptext132:
+  1200                           
+  1201 ;; *************** function _I2C_init *****************
+  1202 ;; Defined at:
+  1203 ;;		line 45 in file "C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Multi_slave\main.c"
+  1204 ;; Parameters:    Size  Location     Type
+  1205 ;;		None
+  1206 ;; Auto vars:     Size  Location     Type
+  1207 ;;		None
+  1208 ;; Return value:  Size  Location     Type
+  1209 ;;		None               void
+  1210 ;; Registers used:
+  1211 ;;		wreg, status,2
+  1212 ;; Tracked objects:
+  1213 ;;		On entry : 0/0
+  1214 ;;		On exit  : 0/0
+  1215 ;;		Unchanged: 0/0
+  1216 ;; Data sizes:     COMMON   BANK0   BANK1   BANK3   BANK2
+  1217 ;;      Params:         4       0       0       0       0
+  1218 ;;      Locals:         0       0       0       0       0
+  1219 ;;      Temps:          0       0       0       0       0
+  1220 ;;      Totals:         4       0       0       0       0
+  1221 ;;Total ram usage:        4 bytes
+  1222 ;; Hardware stack levels used:    1
+  1223 ;; This function calls:
+  1224 ;;		Nothing
+  1225 ;; This function is called by:
+  1226 ;;		_main
+  1227 ;; This function uses a non-reentrant model
+  1228 ;;
+  1229                           psect	text132
+  1230                           	file	"C:\Users\Mugi\OneDrive\Desktop\MUGI STORAGE\Program files\Mp Lab Programs\I2C_Mul
+                                 ti_slave\main.c"
+  1231                           	line	45
+  1232                           	global	__size_of_I2C_init
+  1233  000C                     	__size_of_I2C_init	equ	__end_of_I2C_init-_I2C_init
+  1234                           	
+  1235  06D2                     _I2C_init:	
+  1236                           	opt	stack 7
+  1237                           ; Regs used in _I2C_init: [wreg+status,2]
+  1238                           	line	46
+  1239                           	
+  1240  06D2                     l1004:	
+  1241                           ;main.c: 46: SSPSTAT = 0x00;
+  1242  06D2  1683               	bsf	status, 5	;RP0=1, select bank1
+  1243  06D3  1303               	bcf	status, 6	;RP1=0, select bank1
+  1244  06D4  0194               	clrf	(148)^080h	;volatile
+  1245                           	line	47
+  1246                           	
+  1247  06D5                     l1006:	
+  1248                           ;main.c: 47: SSPCON = 0b00101000;
+  1249  06D5  3028               	movlw	(028h)
+  1250  06D6  1283               	bcf	status, 5	;RP0=0, select bank0
+  1251  06D7  1303               	bcf	status, 6	;RP1=0, select bank0
+  1252  06D8  0094               	movwf	(20)	;volatile
+  1253                           	line	48
+  1254                           	
+  1255  06D9                     l1008:	
+  1256                           ;main.c: 48: SSPADD = 0x3F;
+  1257  06D9  303F               	movlw	(03Fh)
+  1258  06DA  1683               	bsf	status, 5	;RP0=1, select bank1
+  1259  06DB  1303               	bcf	status, 6	;RP1=0, select bank1
+  1260  06DC  0093               	movwf	(147)^080h	;volatile
+  1261                           	line	49
+  1262                           	
+  1263  06DD                     l581:	
+  1264  06DD  0008               	return
+  1265                           	opt stack 0
+  1266                           GLOBAL	__end_of_I2C_init
+  1267  06DE                     	__end_of_I2C_init:
+  1268 ;; =============== function _I2C_init ends ============
+  1269                           
+  1270                           	signat	_I2C_init,88
+  1271                           psect	text133,local,class=CODE,delta=2
+  1272                           global __ptext133
+  1273  0000                     __ptext133:
+  1274                           	global	btemp
+  1275  007E                     	btemp set 07Eh
+  1276                           
+  1277                           	DABS	1,126,2	;btemp
+  1278                           	global	wtemp0
+  1279  007E                     	wtemp0 set btemp
+
+
+HI-TECH Software PICC Macro Assembler V9.80 build 6738 
+Symbol Table                                                                                   Wed May 18 15:59:54 2022
+
+            ?_lcd_send_cmd 0070                          _a 0079                          pc 0002  
+           ?_lcd_send_data 0070                         u10 06BA                         u11 06B9  
+                       u20 06C5                         u21 06C4                         u30 06D0  
+                       u31 06CF                         fsr 0004                        l600 06B5  
+                      l601 06BA                        l602 06BB                        l620 06C6  
+                      l605 06CB                        l606 06CB                        l607 06D0  
+                      l608 06D1                        l617 06C1                        l618 06C1  
+                      l619 06C5                        l581 06DD                        l590 070A  
+                      l591 06F9                        l575 0744                        l584 07A3  
+                      l592 0717                        l576 0744                        l593 0717  
+                      l577 0745                        l578 0745                        l587 07FF  
+                      l596 06F6                        l599 06B5                        _PEN 048A  
+                      _SEN 0488                        fsr0 0004                        _sum 007B  
+                     l1010 06B1                       l1004 06D2                       l1012 06BC  
+                     l1006 06D5                       l1014 06C7                       l1008 06D9  
+                     l1820 076A                       l1812 0749                       l1822 0777  
+                     l1814 0757                       l1830 07A5                       l1824 0784  
+                     l1816 075C                       l1840 07D3                       l1832 07B3  
+                     l1826 0791                       l1818 0761                       l1842 07E0  
+                     l1834 07B8                       l1850 06F8                       l1828 079E  
+                     l1844 07ED                       l1836 07BD                       l1852 06F9  
+                     l1860 071C                       l1846 07FA                       l1838 07C6  
+                     l1854 0705                       l1870 072B                       l1862 071F  
+                     l1848 06DE                       l1856 070A                       l1872 0738  
+                     l1864 0722                       l1874 073D                       l1866 0725  
+                     l1858 0718                       l1868 0728                       STR_1 0009  
+                     u2230 0716                       u2215 074C                       u2231 0715  
+                     u2225 07A8                       _RCEN 048B                       _RSEN 0489  
+                     _main 0718                       btemp 007E           ?_lcd_send_string 0070  
+         __end_of_I2C_init 06DE                       start 0000             ??_lcd_send_cmd 0072  
+         ?_I2C_Master_stop 0070                      ?_main 0070                      _ACKEN 048C  
+                    _ACKDT 048D                      _PORTB 0006                      _PORTC 0007  
+                    _PORTD 0008                      _TRISB 0086                      _TRISC 0087  
+                    _TRISD 0088                      _SSPIF 0063                      pclath 000A  
+                    status 0003                      wtemp0 007E            ??_lcd_send_data 0072  
+             __end_of_main 0748                     ??_main 0079          ?_I2C_Master_start 0070  
+        ?_I2C_Master_write 0070         ??_I2C_Master_start 0070         ??_I2C_Master_write 0072  
+                   _SSPADD 0093                     _SSPCON 0014                     _SSPBUF 0013  
+         __end_of_lcd_init 06F7                  ?_I2C_init 0070       __end_of_lcd_send_cmd 07A4  
+       lcd_send_cmd@data_l 0075         lcd_send_cmd@data_u 0076             __pcstackCOMMON 0070  
+               ??_I2C_init 0074           lcd_send_cmd@data 0074                 __pmaintext 0718  
+                ?_lcd_init 0070                    _SSPSTAT 0094   __size_of_lcd_send_string 0021  
+    __size_of_lcd_send_cmd 005C   __size_of_I2C_Master_stop 000B                 ??_lcd_init 0077  
+     end_of_initialization 06AD  __size_of_I2C_Master_start 000B  __size_of_I2C_Master_write 000B  
+             _lcd_send_cmd 0748      __end_of_lcd_send_data 0800          __size_of_I2C_init 000C  
+       lcd_send_string@str 0078        lcd_send_data@data_l 0075        lcd_send_data@data_u 0076  
+        ??_lcd_send_string 0077        start_initialization 06A9          ??_I2C_Master_stop 0070  
+              __pbssCOMMON 0079          lcd_send_data@data 0074          __size_of_lcd_init 0019  
+         _I2C_Master_start 06B1           _I2C_Master_write 06BC                  __ptext130 06BC  
+                __ptext131 06B1                  __ptext132 06D2                  __ptext124 0000  
+                __ptext133 0000                  __ptext125 06F7                  __ptext126 06DE  
+                __ptext127 07A4                  __ptext128 0748                  __ptext129 06C7  
+                __pstrings 0003                   _I2C_init 06D2                __stringbase 0008  
+          _lcd_send_string 06F7            _I2C_Master_stop 06C7                   _lcd_init 06DE  
+   __size_of_lcd_send_data 005C              __size_of_main 0030   __end_of_I2C_Master_start 06BC  
+ __end_of_I2C_Master_write 06C7    __end_of_lcd_send_string 0718                  stringcode 0003  
+            _lcd_send_data 07A4    __end_of_I2C_Master_stop 06D2       I2C_Master_write@data 0070  
+                 stringdir 0003                   stringtab 0003  
